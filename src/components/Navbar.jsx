@@ -1,7 +1,7 @@
+// src/components/Navbar.jsx
 import React, { useState, useEffect } from 'react';
 import logo1 from '../assets/logo1.svg';
 import menu_icon from '../assets/menu_icon.svg';
-import { testimonialsData, background1, background2, cardLogo1, cardLogo2, cardLogo3, cheifBackground, map } from '../assets/assets';
 
 const Navbar = () => {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -37,6 +37,11 @@ const Navbar = () => {
     {
       title: "Home",
       href: "#Home",
+      items: []
+    },
+    {
+      title: "Testimonials",
+      href: "#Testimonials",
       items: []
     },
     {
@@ -125,12 +130,12 @@ const Navbar = () => {
   };
 
   return (
-    <div className='absolute top-0 left-0 w-full z-10 backdrop-blur-sm'>
-      <div className='container mx-auto flex justify-between items-center px-4 sm:px-6 py-3 md:px-8 lg:px-12 xl:px-20 bg-transparent'>
-        <img src={logo1} alt="Orczy Group Logo" className="h-6 sm:h-7" />
+    <div className='fixed top-0 left-0 w-full z-50 backdrop-blur-sm bg-black/20'>
+      <div className='container mx-auto flex justify-between items-center px-4 py-3'>
+        <img src={logo1} alt="Orczy Group Logo" className="h-6 sm:h-7 md:h-8" />
         
-        {/* Desktop Menu */}
-        <ul className="hidden md:flex flex-wrap justify-center gap-4 lg:gap-7 text-white">
+        {/* Desktop Menu - Hidden on Mobile */}
+        <ul className="hidden lg:flex flex-wrap justify-center gap-4 xl:gap-6 text-white">
           {menuData.map((menu, index) => (
             <li 
               key={index}
@@ -187,38 +192,36 @@ const Navbar = () => {
           ))}
         </ul>
 
-        <button className='hidden md:block bg-white text-black px-4 py-1.5 sm:px-6 sm:py-2 rounded-full font-medium text-sm sm:text-base hover:bg-gray-100 transition-colors'>
+        <button className='hidden lg:block bg-white text-black px-4 py-1.5 md:px-6 md:py-2 rounded-full font-medium text-sm md:text-base hover:bg-gray-100 transition-colors'>
           Sign Up
         </button>
 
-        {/* Mobile menu toggle */}
-        {!showMobileMenu && (
-          <button
-            onClick={() => setShowMobileMenu(true)}
-            className='md:hidden p-1.5 rounded-md hover:bg-black/20 transition-colors'
-            aria-label="Open menu"
-          >
-            <img
-              src={menu_icon}
-              className='w-6 h-6'
-              alt="Menu"
-            />
-          </button>
-        )}
+        {/* Mobile menu toggle - Always visible */}
+        <button
+          onClick={() => setShowMobileMenu(true)}
+          className='p-1 rounded-md hover:bg-black/35 transition-colors lg:hidden'
+          aria-label="Open menu"
+        >
+          <img
+            src={menu_icon}
+            className='w-6 h-8'
+            alt="Menu"
+          />
+        </button>
       </div>
 
-      {/* Mobile menu */}
+      {/* Mobile menu - Full Screen */}
       <div
-        className={`md:hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-20 transition-opacity duration-300 ease-in-out ${showMobileMenu ? 'opacity-100 block' : 'opacity-0 pointer-events-none'}`}
+        className={`lg:hidden fixed inset-0 bg-black/100 backdrop-blur-sm z-50 transition-opacity duration-300 ease-in-out ${showMobileMenu ? 'opacity-100 block' : 'opacity-0 pointer-events-none'}`}
         onClick={closeMobileMenu}
       >
         <div 
-          className='flex justify-end p-4 sm:p-5'
+          className='flex justify-end p-4 sm:p-2'
           onClick={(e) => e.stopPropagation()}
         >
           <button
             onClick={closeMobileMenu}
-            className='p-1.5 rounded-md hover:bg-white/20 transition-colors'
+            className='p-2 rounded-md hover:bg-white/20 transition-colors'
             aria-label="Close menu"
           >
             <svg
@@ -239,14 +242,14 @@ const Navbar = () => {
         </div>
         
         <ul 
-          className='flex flex-col items-center gap-3 sm:gap-4 px-4 sm:px-6 mt-8 max-h-[70vh] overflow-y-auto pb-12'
+          className='w-full flex flex-col items-center gap-3 sm:gap-4 px-4 sm:px-6 mt-8 max-h-[70vh] overflow-y-auto pb-12 bg-gray-900'
           onClick={(e) => e.stopPropagation()}
         >
           {menuData.map((menu, index) => (
             <li key={index} className="w-full">
-              <div className="w-full">
+              <div className="w-full ">
                 <button
-                  className="flex items-center justify-between w-full px-4 py-3 text-center rounded-xl text-white text-lg sm:text-xl font-medium hover:bg-white/10 transition-colors"
+                  className="flex items-center justify-between w-full px-4 py-4 text-left rounded-xl text-white bg-gray-700 text-lg sm:text-xl font-medium hover:bg-gray-600 transition-colors"
                   onClick={() => {
                     if (menu.items.length > 0) {
                       toggleMobileDropdown(index);
@@ -256,7 +259,7 @@ const Navbar = () => {
                     }
                   }}
                 >
-                  <span className="flex-1">{menu.title}</span>
+                  <span>{menu.title}</span>
                   {menu.items.length > 0 && (
                     <svg 
                       className="w-4 h-4 transition-transform duration-200 ml-2"
