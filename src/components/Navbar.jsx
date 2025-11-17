@@ -1,14 +1,18 @@
 // src/components/Navbar.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import logo1 from '../assets/logo.bmp';
 import menu_icon from '../assets/menu_icon.svg';
-
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [mobileMainDropdown, setMobileMainDropdown] = useState(null);
   const [isFoodCourtOpen, setIsFoodCourtOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [dropdownVisible, setDropdownVisible] = useState({});
+  const hoverTimeouts = useRef({});
+
+  const OPEN_DELAY = 50;   // milliseconds (adjust to 5000 for 5s if intended)
+  const CLOSE_DELAY = 50;  // milliseconds (adjust to 500 for 0.5s if intended)
 
   useEffect(() => {
     const onScroll = () => setIsScrolled(window.scrollY > 10);
@@ -19,7 +23,15 @@ const Navbar = () => {
   const menuData = [
     { title: 'Home', href: '#Home', items: [] },
     { title: 'Testimonials', href: '#Testimonials', items: [] },
-    { title: 'Info', href: '#Info', items: ['CEO', 'TEAM', 'NEWS/BLOG'] },
+    {
+      title: 'Info',
+      href: '#Info',
+      items: [
+        { label: 'CEO', href: '#CEOMessage' }, // Direct link to CEO section
+        'TEAM',
+        'NEWS/BLOG'
+      ],
+    },
     {
       title: 'Project',
       href: '#Project',
@@ -59,20 +71,33 @@ const Navbar = () => {
     },
   ];
 
-  const navigateToSection = (href, itemLabel = null) => {
-    let targetId = href.replace('#', '');
-    if (itemLabel) {
-      const clean = itemLabel.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '-');
-      targetId = `${targetId}-${clean}`;
+  const navigateToSection = (targetHref, fallbackLabel = null) => {
+    let selector = targetHref;
+
+    // If it's a plain string item (not CEO), derive ID from parent + label
+    if (fallbackLabel && typeof fallbackLabel === 'string') {
+      const clean = fallbackLabel.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '-');
+      selector = `${targetHref}-${clean}`;
     }
-    const selector = `#${targetId}`;
+
+    // Update URL
     window.history.pushState(null, '', selector);
-    const el = document.querySelector(selector) || document.querySelector(href);
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
+
+    // Scroll to element
+    const el = document.querySelector(selector);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   const navigateToLogin = () => {
     window.location.href = '/login';
+  };
+
+  const closeMobileMenu = () => {
+    setIsMobileMenuOpen(false);
+    setMobileMainDropdown(null);
+    setIsFoodCourtOpen(false);
   };
 
   const toggleMainDropdown = (index) => {
@@ -89,12 +114,6 @@ const Navbar = () => {
     setIsFoodCourtOpen(!isFoodCourtOpen);
   };
 
-  const closeMobileMenu = () => {
-    setIsMobileMenuOpen(false);
-    setMobileMainDropdown(null);
-    setIsFoodCourtOpen(false);
-  };
-
   return (
     <>
       {/* Desktop Navbar */}
@@ -105,75 +124,130 @@ const Navbar = () => {
       >
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
-            <img src={logo1} alt="Logo" className="h-7 sm:h-8" />
-            
+            <img src={logo1} alt="Orczy Group Logo" className="h-7 sm:h-8" />
+
             {/* Desktop Menu */}
             <nav className="hidden lg:flex items-center space-x-1">
-              {menuData.slice(0, -1).map((menu, i) => (
-                <div key={i} className="relative group">
-                  <button
-                    className="px-3.5 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 rounded-lg"
-                    onClick={() => navigateToSection(menu.href)}
+              {menuData.slice(0, -1).map((menu, i) => {
+                const hasDropdown = menu.items.length > 0;
+
+                const handleMouseEnter = () => {
+                  if (!hasDropdown) return;
+                  if (hoverTimeouts.current[i]) clearTimeout(hoverTimeouts.current[i]);
+                  if (hoverTimeouts.current[`close-${i}`]) {
+                    clearTimeout(hoverTimeouts.current[`close-${i}`]);
+                    delete hoverTimeouts.current[`close-${i}`];
+                  }
+                  hoverTimeouts.current[i] = setTimeout(() => {
+                    setDropdownVisible(prev => ({ ...prev, [i]: true }));
+                  }, OPEN_DELAY);
+                };
+
+                const handleMouseLeave = () => {
+                  if (hoverTimeouts.current[i]) clearTimeout(hoverTimeouts.current[i]);
+                  const closeTimer = setTimeout(() => {
+                    setDropdownVisible(prev => {
+                      const updated = { ...prev };
+                      delete updated[i];
+                      return updated;
+                    });
+                  }, CLOSE_DELAY);
+                  hoverTimeouts.current[`close-${i}`] = closeTimer;
+                };
+
+                return (
+                  <div
+                    key={i}
+                    className="relative"
+                    onMouseEnter={handleMouseEnter}
+                    onMouseLeave={handleMouseLeave}
                   >
-                    {menu.title}
-                  </button>
-                  {menu.items.length > 0 && (
-                    <div className="absolute top-full left-0 mt-2 w-60 bg-white rounded-lg shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-200 z-40">
-                      <div className="p-2">
-                        {menu.items.map((item) => {
-                          if (typeof item === 'string') {
-                            return (
-                              <button
-                                key={item}
-                                className="block w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded"
-                                onClick={() => navigateToSection(menu.href, item)}
-                              >
-                                {item}
-                              </button>
-                            );
-                          } else if (item.title === 'Food Court') {
-                            return (
-                              <div key="fc" className="relative group">
-                                <button className="w-full flex justify-between items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded">
-                                  {item.title}
-                                  <svg className="w-3 h-3 ml-1 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-                                  </svg>
+                    <button
+                      className="px-3.5 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 rounded-lg"
+                      onClick={() => {
+                        navigateToSection(menu.href);
+                        closeMobileMenu();
+                      }}
+                    >
+                      {menu.title}
+                    </button>
+
+                    {hasDropdown && (
+                      <div
+                        className={`absolute top-full left-0 mt-2 w-60 bg-white rounded-lg shadow-lg border border-gray-200 z-40 transition-opacity duration-200 ${
+                          dropdownVisible[i] ? 'opacity-100 visible' : 'opacity-0 invisible'
+                        }`}
+                      >
+                        <div className="p-2">
+                          {menu.items.map((item, idx) => {
+                            if (typeof item === 'string') {
+                              return (
+                                <button
+                                  key={idx}
+                                  className="block w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded"
+                                  onClick={() => navigateToSection(menu.href, item)}
+                                >
+                                  {item}
                                 </button>
-                                <div className="absolute left-full top-0 mt-0 w-48 bg-white rounded-r-lg shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-200 z-50">
-                                  <div className="p-2">
-                                    {item.subItems.map((sub) => (
-                                      <button
-                                        key={sub}
-                                        className="block w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded"
-                                        onClick={() => navigateToSection(menu.href, sub)}
-                                      >
-                                        {sub}
-                                      </button>
-                                    ))}
+                              );
+                            } else if (item.title === 'Food Court') {
+                              return (
+                                <div key="fc" className="relative group">
+                                  <button className="w-full flex justify-between items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded">
+                                    {item.title}
+                                    <svg className="w-3 h-3 ml-1 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
+                                      <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                                    </svg>
+                                  </button>
+                                  <div className="absolute left-full top-0 mt-0 w-48 bg-white rounded-r-lg shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-200 z-50">
+                                    <div className="p-2">
+                                      {item.subItems.map((sub) => (
+                                        <button
+                                          key={sub}
+                                          className="block w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded"
+                                          onClick={() => navigateToSection(menu.href, sub)}
+                                        >
+                                          {sub}
+                                        </button>
+                                      ))}
+                                    </div>
                                   </div>
                                 </div>
-                              </div>
-                            );
-                          }
-                          return null;
-                        })}
+                              );
+                            } else if (item.label && item.href) {
+                              // Special item like CEO
+                              return (
+                                <button
+                                  key={item.label}
+                                  className="block w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded"
+                                  onClick={() => {
+                                    navigateToSection(item.href);
+                                    closeMobileMenu();
+                                  }}
+                                >
+                                  {item.label}
+                                </button>
+                              );
+                            }
+                            return null;
+                          })}
+                        </div>
                       </div>
-                    </div>
-                  )}
-                </div>
-              ))}
+                    )}
+                  </div>
+                );
+              })}
             </nav>
 
             {/* Desktop Buttons */}
             <div className="hidden lg:flex items-center space-x-3">
-              <button 
+              <button
                 className="bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium hover:bg-gray-200 transition-colors"
                 onClick={navigateToLogin}
               >
                 Sign In
               </button>
-              <button 
+              <button
                 className="bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-blue-700 transition-colors"
                 onClick={() => navigateToSection('#Contact')}
               >
@@ -191,7 +265,7 @@ const Navbar = () => {
         </div>
       </header>
 
-      {/* Full-Screen Mobile Menu */}
+      {/* Mobile Full-Screen Menu */}
       <div
         className={`lg:hidden fixed inset-0 z-50 transition-opacity duration-300 ${
           isMobileMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
@@ -239,9 +313,7 @@ const Navbar = () => {
                       {menu.title}
                       <svg
                         className="w-5 h-5 text-gray-500 transition-transform"
-                        style={{
-                          transform: mobileMainDropdown === index ? 'rotate(180deg)' : 'rotate(0deg)',
-                        }}
+                        style={{ transform: mobileMainDropdown === index ? 'rotate(180deg)' : 'rotate(0deg)' }}
                         fill="currentColor"
                         viewBox="0 0 20 20"
                       >
@@ -251,11 +323,11 @@ const Navbar = () => {
 
                     {mobileMainDropdown === index && (
                       <div className="mt-3 space-y-2 pl-4 border-l-2 border-gray-200">
-                        {menu.items.map((item, itemIndex) => {
+                        {menu.items.map((item, itemIdx) => {
                           if (typeof item === 'string') {
                             return (
                               <button
-                                key={itemIndex}
+                                key={itemIdx}
                                 className="block w-full text-left text-lg text-gray-600 hover:text-blue-600 py-2"
                                 onClick={() => {
                                   navigateToSection(menu.href, item);
@@ -275,9 +347,7 @@ const Navbar = () => {
                                   {item.title}
                                   <svg
                                     className="w-4 h-4 text-gray-500 transition-transform ml-2"
-                                    style={{
-                                      transform: isFoodCourtOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-                                    }}
+                                    style={{ transform: isFoodCourtOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
                                     fill="currentColor"
                                     viewBox="0 0 20 20"
                                   >
@@ -301,6 +371,20 @@ const Navbar = () => {
                                   </div>
                                 )}
                               </div>
+                            );
+                          } else if (item.label && item.href) {
+                            // CEO on mobile
+                            return (
+                              <button
+                                key={item.label}
+                                className="block w-full text-left text-lg text-gray-600 hover:text-blue-600 py-2"
+                                onClick={() => {
+                                  navigateToSection(item.href);
+                                  closeMobileMenu();
+                                }}
+                              >
+                                {item.label}
+                              </button>
                             );
                           }
                           return null;
@@ -336,6 +420,7 @@ const Navbar = () => {
         </div>
       </div>
 
+      {/* Spacer to prevent content hiding under fixed navbar */}
       <div className="h-16 lg:h-16"></div>
     </>
   );

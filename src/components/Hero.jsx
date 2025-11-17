@@ -17,37 +17,28 @@ const Hero = () => {
           }}
         />
       </div>
-
-      {/* Dark overlay with gradient for better text readability */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black/50 z-10"></div>
-
       {/* Content - Positioned at LEFT-TOP */}
-      <div className="relative z-20 w-full text-white pt-10 sm:pt-24 md:pt-32 px-3">
+      <div className="relative z-20 w-2/3 text-white pt-2 sm:pt-14 md:pt-32 px-10">
         <div className="max-w-4xl mx-auto text-left">
           <h1 className="absolute text-3xl sm:text-5xl md:text-6xl font-bold mb-4 leading-tight px-0 py-0">
             Welcome to Orczy Group
           </h1>
-         
-          
-         
         </div>
       </div>
 
       {/* Buttons - Positioned at RIGHT-BOTTOM */}
-      <div className="relative z-20 mt-auto mb-105 sm:mb-12 md:mb-16 lg:mb-20 px-4">
-  <div className="max-w-4xl mx-auto flex flex-col sm:flex-row justify-end gap-3 sm:gap-4 ">
-    <a
-      href="#Project"
-      className="content-between inline-block border-2 text-zinc-50 border-white px-4 sm:px-5 md:px-6 lg:px-8 py-2 sm:py-2 md:py-3 rounded-full hover:bg-white hover:text-black transition-all duration-300 text-sm sm:text-base md:text-lg font-medium text-center whitespace-nowrap min-w-[140px] sm:min-w-[160px] md:min-w-[180px]"
-      onClick={(e) => {
-        e.preventDefault();
-        window.history.pushState(null, "", "#Project");
-        document.querySelector("#Project")?.scrollIntoView({ behavior: "smooth" });
-      }}
-    >
-      Explore Projects
-    </a>
-  </div>
+      <div className="absolute bottom-8 right-8 z-20">
+  <a
+    href="#Project"
+    className="inline-block border-2 text-zinc-50 border-white px-4 sm:px-5 md:px-6 lg:px-8 py-2 sm:py-2 md:py-3 rounded-full hover:bg-white hover:text-black transition-all duration-300 text-sm sm:text-base md:text-lg font-medium text-center whitespace-nowrap min-w-[140px] sm:min-w-[160px] md:min-w-[180px] bg-black/70 backdrop-blur-sm"
+    onClick={(e) => {
+      e.preventDefault();
+      window.history.pushState(null, "", "#Project");
+      document.querySelector("#Project")?.scrollIntoView({ behavior: "smooth" });
+    }}
+  >
+    Explore Projects
+  </a>
 </div>
       {/* Scroll Indicator */}
       <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-20">

@@ -53,7 +53,9 @@ export const About = () => {
             </div>
           </div>
         <p className="my-5 max-w-lg">
-        Our Group is a multinational conglomerate that leverages private equity to finance lifestyle projects in Pakistan and Central Eastern Europe. In uncertain times, we believe investors need stable, credible opportunities to generate multiple income streams. Today’s consumers demand quality, convenience, and affordability without compromise. Yet, time, knowledge, and networks often stand between investors and promising ideas. As investment becomes more institutionalised and professional, high transaction costs increasingly deter participation. Our Founding Partner, Usman Khawar, recognised this market gap in 2012.
+        <h2 className="text-lg font-bold">About Orczy Group</h2><br/>
+
+Orczy Group is a forward-thinking company committed to excellence across real estate, retail, hospitality, and technology. Built on trust and innovation, we deliver value-driven projects that inspire communities and redefine industry standards.  
         </p>
         <button className="bg-blue-600 text-white px-8 py-2 rounded-2xl">Learn More</button>
         </div>
