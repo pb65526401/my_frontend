@@ -12,7 +12,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Footer from './components/Footer';
 import Vision from './components/Vision';
 import Mission from './components/Mission';
-import CEOMessage from './components/CeoMessage';
+import CEOMessage from './components/CEOMessage';
 const App = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
