@@ -10,7 +10,8 @@ import {
   cardLogo2, 
   cardLogo3, 
   cheifBackground, 
-  map 
+  map, 
+  brand_img
 } from '../assets/assets';
 
 export const Body = () => {
@@ -54,19 +55,42 @@ export const Body = () => {
   };
 
   return (
-    <div className="w-full bg-gray-800"> {/* 👈 No background here! */}
+    <div className="w-full bg-white "> {/* 👈 No background here! */}
       {/* Who We Are */}
-      <section id="Info" className="py-16 md:py-24 px-4 md:px-8" data-aos="fade-up">
+      <section id="Info" className="py-16 md:py-24 px-4 md:px-8 " data-aos="fade-up">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-8">
-            <h1 className="text-2xl sm:text-4xl font-bold mb-2 text-gray-100">About <span className="underline underline-offset-4 under font-light">Our Brand</span></h1>
+            <h1 className="text-2xl sm:text-4xl font-bold mb-2 text-gray-800">About <span className="underline underline-offset-4 under font-light">Our Brand</span></h1>
           </div>
-          <div className="space-y-6">
-            <p className="text-gray-500 max-w-80 text-center mb-8">Passionate About Properties, Dedicated to Your Vision</p>
-            <p className="text-white max-w-4xl mx-auto text-lg leading-relaxed">
+          <div>
+            <p className="text-gray-800 max-w-fit text-center mb-8 flex flex-col items-center justify-center container mx-auto p-2 md:px-20 lg:px-32 w-full overflow-hidden">Passionate About Properties, Dedicated to Your Vision</p>
+            <div className="flex flex-col md:flex-row items-center md:items-start md:gap-20">
+              <img src={brand_img} alt="" className="w-full sm:w-1/2 max-w-lg"/>
+            </div>
+            <div className="flex flex-col items-center md:items-start mt-10 text-gray-600">
+              <div className="grid grid-cols-2 gap-6 md:gap-10 w-full 2xl:pr-28">
+                <div>
+                <p className="text-4xl font-medium text-gray-800">10+</p>
+                <p>Years of Excellence</p>
+                </div>                
+                <div>
+                <p className="text-4xl font-medium text-gray-800">12+</p>
+                <p>Projects Complete</p>
+                </div>
+                <div>
+                <p className="text-4xl font-medium text-gray-800">20+</p>
+                <p>Mn. Sq. Ft. Delivered</p>
+                <div>
+                <p className="text-4xl font-medium text-gray-800">25+</p>
+                <p>Ongoing Projects</p>
+                </div>
+                </div>
+              </div>
+            </div>
+            <p className="text-gray-800 max-w-4xl mx-auto text-lg leading-relaxed">
               Our Group is a multinational conglomerate that leverages private equity to finance a range of lifestyle projects in Pakistan and Central Eastern Europe. We recognise that uncertain times make it imperative for investors to have access to stable, credible opportunities to generate multiple income streams. We also recognise that the modern consumer demands products and services that do not compromise on quality, convenience and affordability. The missing links between investors and promising ideas are scarcity of time, knowledge and relevant professional networks. In a world where investment is becoming more institutionalised, securitised and professionalised, investors are increasingly deterred by the high transaction costs involved. Our Founding Partner, Usman Khawar, recognised this information gap in the market back in 2012.
             </p>
-            <p className="text-white max-w-4xl mx-auto text-lg leading-relaxed">
+            <p className="text-gray-800 max-w-4xl mx-auto text-lg leading-relaxed">
               To overcome this information asymmetry, they wanted to forge long-standing partnerships with investors who want value today, tomorrow and for decades to come. Seven years on, we are finally linking investors and ideas for greater economic and social change through a platform that is trusted and universally accessible. This is the ethos of the Orczy Group, as a point of convergence for investors and ideas.<br /><br />
               Quality sells and sells well. Our completed projects have proven lucrative to their investors while the ensuing products and services are emerging as strong brands in their own right. A major positive externality are the countless jobs we are generating in the process, both in Pakistan and in Europe.<br /><br />
               The Orczy Group was founded in 2017 and currently employs over 150 staff members across four project offices and two continents.
