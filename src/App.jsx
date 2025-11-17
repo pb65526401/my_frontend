@@ -10,9 +10,12 @@ import Testimonials from './components/Testimonials';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'
 import Footer from './components/Footer';
+<<<<<<< HEAD
 import { useEffect } from 'react';
 import '@n8n/chat/style.css';
 import { createChat } from '@n8n/chat';
+=======
+>>>>>>> fc8d9cd00782a615263fe055e87ceaaced48fcf4
 
 const App = () => {
  
