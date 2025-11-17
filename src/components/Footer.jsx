@@ -78,7 +78,7 @@ const Footer = () => {
                 <li>123 Business Street</li>
                 <li>Budapest, Hungary</li>
                 <li>contact@orczygroup.com</li>
-                <li>+1 234 567 8900</li>
+                <li>+92 304 111 88 66</li>
               </ul>
             </div>
           </div>
