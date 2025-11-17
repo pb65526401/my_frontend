@@ -5,56 +5,52 @@ import landingImage from '../assets/landing_page1.png';
 const Hero = () => {
   return (
     <section className="relative w-full min-h-screen flex flex-col justify-start overflow-hidden">
-      {/* Background Image */}
-      <img
-        src={landingImage}
-        alt="Hero Background"
-        className="absolute inset-0 w-full h-full object-cover z-0"
-      />
+      {/* Background Image with better sizing */}
+      <div className="absolute inset-0 z-0">
+        <img
+          src={landingImage}
+          alt="Hero Background"
+          className="w-fit h-fit object-cover object-center"
+          style={{
+            minHeight: '30vh',
+            minWidth: '20vw'
+          }}
+        />
+      </div>
 
-      {/* Dark overlay */}
-      <div className="absolute inset-0 bg-black/40 z-10"></div>
+      {/* Dark overlay with gradient for better text readability */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black/50 z-10"></div>
 
       {/* Content - Positioned at LEFT-TOP */}
-      <div className="relative z-20 w-full text-white pt-16 sm:pt-24 md:pt-32 px-4">
-        <div className="max-w-4xl mx-auto text-left"> {/* 👈 Changed from text-center to text-left */}
-          <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold mb-4">
-            Welcome to <span className="text-white">Orczy</span>
+      <div className="relative z-20 w-full text-white pt-10 sm:pt-24 md:pt-32 px-3">
+        <div className="max-w-4xl mx-auto text-left">
+          <h1 className="absolute text-3xl sm:text-5xl md:text-6xl font-bold mb-4 leading-tight px-0 py-0">
+            Welcome to Orczy Group
           </h1>
-          <p className="text-lg sm:text-2xl md:text-3xl font-light text-gray-200 mb-8">
-            Premium Real Estate & Retail Solutions
-          </p>
+         
+          
+         
         </div>
       </div>
 
       {/* Buttons - Positioned at RIGHT-BOTTOM */}
-      <div className="absolute bottom-25 right-8 z-20 flex flex-col col sm:flex-row gap-4">
-        <a
-          href="#Project"
-          className="border-2 text-zinc-50 border-white px-8 py-3 rounded-full hover:bg-white hover:text-black transition-all duration-300 text-lg font-medium w-full sm:w-auto text-center"
-          onClick={(e) => {
-            e.preventDefault();
-            window.history.pushState(null, "", "#Project");
-            document.querySelector("#Project")?.scrollIntoView({ behavior: "smooth" });
-          }}
-        >
-          Explore Projects
-        </a>
-        <a
-          href="#Contact"
-          className="bg-blue-600 px-8 py-3 rounded-full hover:bg-blue-700 transition-all duration-300 text-lg font-medium w-full sm:w-auto text-center"
-          onClick={(e) => {
-            e.preventDefault();
-            window.history.pushState(null, "", "#Contact");
-            document.querySelector("#Contact")?.scrollIntoView({ behavior: "smooth" });
-          }}
-        >
-          Contact Us
-        </a>
-      </div>
-
-      {/* Scroll Indicator (optional) */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20">
+      <div className="relative z-20 mt-auto mb-105 sm:mb-12 md:mb-16 lg:mb-20 px-4">
+  <div className="max-w-4xl mx-auto flex flex-col sm:flex-row justify-end gap-3 sm:gap-4 ">
+    <a
+      href="#Project"
+      className="content-between inline-block border-2 text-zinc-50 border-white px-4 sm:px-5 md:px-6 lg:px-8 py-2 sm:py-2 md:py-3 rounded-full hover:bg-white hover:text-black transition-all duration-300 text-sm sm:text-base md:text-lg font-medium text-center whitespace-nowrap min-w-[140px] sm:min-w-[160px] md:min-w-[180px]"
+      onClick={(e) => {
+        e.preventDefault();
+        window.history.pushState(null, "", "#Project");
+        document.querySelector("#Project")?.scrollIntoView({ behavior: "smooth" });
+      }}
+    >
+      Explore Projects
+    </a>
+  </div>
+</div>
+      {/* Scroll Indicator */}
+      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-20">
         <div className="animate-bounce">
           <svg 
             className="w-6 h-6 text-white" 
