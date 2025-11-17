@@ -149,7 +149,7 @@ const Navbar = () => {
           }}
         >
           <span className="flex items-center">
-            <div className="w-1.5 h-1.5 bg-blue-400 rounded-full mr-3 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <div className="w-1.5 h-1.5 bg-blue-400 rounded-full mr-3"></div>
             {item}
           </span>
         </a>
@@ -204,17 +204,19 @@ const Navbar = () => {
               </div>
             </>
           ) : (
-            // Desktop: Food Court submenu - FIXED POSITIONING
-            <div className="relative">
+            // Desktop: Food Court submenu - FIXED VERSION
+            <div 
+              className="relative"
+              onMouseEnter={() => {
+                if (dropdownTimeoutRef.current) clearTimeout(dropdownTimeoutRef.current);
+                setFoodCourtOpenIndex(itemIndex);
+              }}
+              onMouseLeave={() => {
+                dropdownTimeoutRef.current = setTimeout(() => setFoodCourtOpenIndex(null), 150);
+              }}
+            >
               <button
-                className="w-full text-left px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 flex justify-between items-center transition-colors duration-200 rounded-md group"
-                onMouseEnter={() => {
-                  if (dropdownTimeoutRef.current) clearTimeout(dropdownTimeoutRef.current);
-                  setFoodCourtOpenIndex(itemIndex);
-                }}
-                onMouseLeave={() => {
-                  dropdownTimeoutRef.current = setTimeout(() => setFoodCourtOpenIndex(null), 150);
-                }}
+                className="w-full text-left px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 flex justify-between items-center transition-colors duration-200 rounded-md"
               >
                 <span className="flex items-center">
                   <div className="w-1.5 h-1.5 bg-orange-400 rounded-full mr-3"></div>
@@ -234,41 +236,36 @@ const Navbar = () => {
                 </svg>
               </button>
 
-              {/* Food Court Submenu - Fixed positioning to appear below */}
+              {/* Food Court Submenu - FIXED POSITIONING */}
               <div
-                className={`absolute left-0 top-full w-56 bg-white rounded-lg shadow-xl border border-gray-100 z-30 transition-all duration-300 ease-out ${
+                className={`absolute left-0 top-full mt-1 w-56 bg-white rounded-lg shadow-xl border border-gray-200 z-50 transition-all duration-200 ${
                   foodCourtOpenIndex === itemIndex
                     ? 'opacity-100 visible translate-y-0'
                     : 'opacity-0 invisible -translate-y-2 pointer-events-none'
                 }`}
-                onMouseEnter={() => {
-                  if (dropdownTimeoutRef.current) clearTimeout(dropdownTimeoutRef.current);
-                  setFoodCourtOpenIndex(itemIndex);
-                }}
-                onMouseLeave={() => {
-                  dropdownTimeoutRef.current = setTimeout(() => setFoodCourtOpenIndex(null), 150);
-                }}
               >
-                <div className="p-2">
-                  <div className="text-xs font-semibold text-gray-500 uppercase tracking-wide px-3 py-2 border-b border-gray-100">
+                <div className="p-3">
+                  <div className="text-xs font-semibold text-gray-500 uppercase tracking-wide px-2 py-1 border-b border-gray-100 mb-2">
                     Restaurant Partners
                   </div>
-                  {item.subItems.map((sub, si) => (
-                    <a
-                      key={si}
-                      href="#"
-                      className="block px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-md transition-colors group/item"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        navigateToSection(menu.href, sub);
-                      }}
-                    >
-                      <span className="flex items-center">
-                        <div className="w-1 h-1 bg-gray-300 rounded-full mr-3 group-hover/item:bg-blue-400 transition-colors"></div>
-                        {sub}
-                      </span>
-                    </a>
-                  ))}
+                  <div className="space-y-1">
+                    {item.subItems.map((sub, si) => (
+                      <a
+                        key={si}
+                        href="#"
+                        className="block px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded transition-colors"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          navigateToSection(menu.href, sub);
+                        }}
+                      >
+                        <span className="flex items-center">
+                          <div className="w-1.5 h-1.5 bg-gray-300 rounded-full mr-3"></div>
+                          {sub}
+                        </span>
+                      </a>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
@@ -334,7 +331,7 @@ const Navbar = () => {
               {/* Desktop Dropdown */}
               {menu.items.length > 0 && activeDropdown === index && (
                 <div
-                  className="absolute top-full left-0 mt-2 w-64 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden z-30 animate-in fade-in-0 zoom-in-95"
+                  className="absolute top-full left-0 mt-2 w-64 bg-white rounded-xl shadow-xl border border-gray-100 overflow-visible z-40"
                   onMouseEnter={() => handleMouseEnter(index)}
                   onMouseLeave={handleMouseLeave}
                 >
@@ -441,7 +438,7 @@ const Navbar = () => {
 
                     {/* Mobile Dropdown */}
                     {menu.items.length > 0 && mobileDropdown === index && (
-                      <div className="mt-2 ml-2 mr-2 rounded-lg bg-white shadow-inner border border-gray-100 overflow-hidden animate-in fade-in-0 slide-in-from-top-2">
+                      <div className="mt-2 ml-2 mr-2 rounded-lg bg-white shadow-inner border border-gray-100 overflow-hidden">
                         {menu.items.map((item, itemIndex) =>
                           renderDropdownItem(menu, item, itemIndex, true)
                         )}
