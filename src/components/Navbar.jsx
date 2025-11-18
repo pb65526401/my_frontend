@@ -1,9 +1,11 @@
 // src/components/Navbar.jsx
 import React, { useState, useEffect, useRef } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import logo1 from '../assets/logo.bmp';
 import menu_icon from '../assets/menu_icon.svg';
 
 const Navbar = () => {
+  const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [mobileMainDropdown, setMobileMainDropdown] = useState(null);
   const [isFoodCourtOpen, setIsFoodCourtOpen] = useState(false);
@@ -11,8 +13,8 @@ const Navbar = () => {
   const [dropdownVisible, setDropdownVisible] = useState({});
   const hoverTimeouts = useRef({});
 
-  const OPEN_DELAY = 50;   // milliseconds (adjust to 5000 for 5s if intended)
-  const CLOSE_DELAY = 50;  // milliseconds (adjust to 500 for 0.5s if intended)
+  const OPEN_DELAY = 50;
+  const CLOSE_DELAY = 50;
 
   useEffect(() => {
     const onScroll = () => setIsScrolled(window.scrollY > 10);
@@ -21,13 +23,13 @@ const Navbar = () => {
   }, []);
 
   const menuData = [
-    { title: 'Home', href: '#Home', items: [] },
+    { title: 'Home', href: '/', items: [] },
     { title: 'Testimonials', href: '#Testimonials', items: [] },
     {
       title: 'Info',
       href: '#Info',
       items: [
-        { label: 'CEO', href: '#CEOMessage' }, // Direct link to CEO section
+        { label: 'CEO', page: '/ceo-message' },
         'TEAM',
         'NEWS/BLOG'
       ],
@@ -66,27 +68,16 @@ const Navbar = () => {
     },
     {
       title: 'Contact',
-      href: '#Contact',
+      href: '/contact',
       items: ['INFO', 'CAREER'],
     },
   ];
 
-  const navigateToSection = (targetHref, fallbackLabel = null) => {
-    let selector = targetHref;
-
-    // If it's a plain string item (not CEO), derive ID from parent + label
-    if (fallbackLabel && typeof fallbackLabel === 'string') {
-      const clean = fallbackLabel.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '-');
-      selector = `${targetHref}-${clean}`;
-    }
-
-    // Update URL
-    window.history.pushState(null, '', selector);
-
-    // Scroll to element
-    const el = document.querySelector(selector);
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
+  const navigateToSection = (targetHref) => {
+    if (targetHref.startsWith('#')) {
+      window.history.pushState(null, '', targetHref);
+      const el = document.querySelector(targetHref);
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
@@ -114,6 +105,8 @@ const Navbar = () => {
     setIsFoodCourtOpen(!isFoodCourtOpen);
   };
 
+  const isHomePage = location.pathname === '/';
+
   return (
     <>
       {/* Desktop Navbar */}
@@ -124,13 +117,21 @@ const Navbar = () => {
       >
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
-            <img src={logo1} alt="Orczy Group Logo" className="h-7 sm:h-8" />
+            {/* Logo + Pakistan / Hungary (LEFT SIDE) */}
+            <div className="flex items-center space-x-3">
+              <Link to="/">
+                <img src={logo1} alt="Orczy Group Logo" className="h-7 sm:h-8" />
+              </Link>
+              {/* White-themed, subtle "Pakistan / Hungary" label */}
+              <span className="text-xs font-medium text-gray-500 hidden sm:block">
+                Pakistan / Hungary
+              </span>
+            </div>
 
             {/* Desktop Menu */}
             <nav className="hidden lg:flex items-center space-x-1">
               {menuData.slice(0, -1).map((menu, i) => {
                 const hasDropdown = menu.items.length > 0;
-
                 const handleMouseEnter = () => {
                   if (!hasDropdown) return;
                   if (hoverTimeouts.current[i]) clearTimeout(hoverTimeouts.current[i]);
@@ -162,15 +163,28 @@ const Navbar = () => {
                     onMouseEnter={handleMouseEnter}
                     onMouseLeave={handleMouseLeave}
                   >
-                    <button
-                      className="px-3.5 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 rounded-lg"
-                      onClick={() => {
-                        navigateToSection(menu.href);
-                        closeMobileMenu();
-                      }}
-                    >
-                      {menu.title}
-                    </button>
+                    {menu.href.startsWith('/') ? (
+                      <Link
+                        to={menu.href}
+                        className="px-3.5 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 rounded-lg"
+                      >
+                        {menu.title}
+                      </Link>
+                    ) : isHomePage ? (
+                      <button
+                        className="px-3.5 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 rounded-lg"
+                        onClick={() => navigateToSection(menu.href)}
+                      >
+                        {menu.title}
+                      </button>
+                    ) : (
+                      <Link
+                        to="/"
+                        className="px-3.5 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 rounded-lg"
+                      >
+                        {menu.title}
+                      </Link>
+                    )}
 
                     {hasDropdown && (
                       <div
@@ -185,7 +199,10 @@ const Navbar = () => {
                                 <button
                                   key={idx}
                                   className="block w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded"
-                                  onClick={() => navigateToSection(menu.href, item)}
+                                  onClick={() => {
+                                    if (isHomePage) navigateToSection(menu.href, item);
+                                    else window.location.href = '/';
+                                  }}
                                 >
                                   {item}
                                 </button>
@@ -205,7 +222,10 @@ const Navbar = () => {
                                         <button
                                           key={sub}
                                           className="block w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded"
-                                          onClick={() => navigateToSection(menu.href, sub)}
+                                          onClick={() => {
+                                            if (isHomePage) navigateToSection(menu.href, sub);
+                                            else window.location.href = '/';
+                                          }}
                                         >
                                           {sub}
                                         </button>
@@ -214,19 +234,16 @@ const Navbar = () => {
                                   </div>
                                 </div>
                               );
-                            } else if (item.label && item.href) {
-                              // Special item like CEO
+                            } else if (item.label && item.page) {
                               return (
-                                <button
+                                <Link
                                   key={item.label}
+                                  to={item.page}
                                   className="block w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded"
-                                  onClick={() => {
-                                    navigateToSection(item.href);
-                                    closeMobileMenu();
-                                  }}
+                                  onClick={closeMobileMenu}
                                 >
                                   {item.label}
-                                </button>
+                                </Link>
                               );
                             }
                             return null;
@@ -247,12 +264,12 @@ const Navbar = () => {
               >
                 Sign In
               </button>
-              <button
+              <Link
+                to="/contact"
                 className="bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-blue-700 transition-colors"
-                onClick={() => navigateToSection('#Contact')}
               >
                 Contact
-              </button>
+              </Link>
             </div>
 
             <button
@@ -265,7 +282,7 @@ const Navbar = () => {
         </div>
       </header>
 
-      {/* Mobile Full-Screen Menu */}
+      {/* Mobile Menu */}
       <div
         className={`lg:hidden fixed inset-0 z-50 transition-opacity duration-300 ${
           isMobileMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
@@ -281,7 +298,9 @@ const Navbar = () => {
         >
           <div className="flex items-center justify-between p-6 border-b border-gray-200">
             <div className="flex items-center space-x-3">
-              <img src={logo1} alt="Logo" className="h-8" />
+              <Link to="/">
+                <img src={logo1} alt="Logo" className="h-8" />
+              </Link>
               <span className="text-xl font-bold text-gray-800">Menu</span>
             </div>
             <button onClick={closeMobileMenu} className="p-2 rounded-full hover:bg-gray-100">
@@ -295,15 +314,25 @@ const Navbar = () => {
             {menuData.map((menu, index) => (
               <div key={index} className="border-b border-gray-100 pb-5 last:border-0 last:pb-0">
                 {menu.items.length === 0 ? (
-                  <button
-                    className="block w-full text-left text-xl font-medium text-gray-800 py-3 hover:text-blue-600"
-                    onClick={() => {
-                      navigateToSection(menu.href);
-                      closeMobileMenu();
-                    }}
-                  >
-                    {menu.title}
-                  </button>
+                  menu.href.startsWith('/') ? (
+                    <Link
+                      to={menu.href}
+                      className="block w-full text-left text-xl font-medium text-gray-800 py-3 hover:text-blue-600"
+                      onClick={closeMobileMenu}
+                    >
+                      {menu.title}
+                    </Link>
+                  ) : (
+                    <button
+                      className="block w-full text-left text-xl font-medium text-gray-800 py-3 hover:text-blue-600"
+                      onClick={() => {
+                        navigateToSection(menu.href);
+                        closeMobileMenu();
+                      }}
+                    >
+                      {menu.title}
+                    </button>
+                  )
                 ) : (
                   <>
                     <button
@@ -372,19 +401,16 @@ const Navbar = () => {
                                 )}
                               </div>
                             );
-                          } else if (item.label && item.href) {
-                            // CEO on mobile
+                          } else if (item.label && item.page) {
                             return (
-                              <button
+                              <Link
                                 key={item.label}
+                                to={item.page}
                                 className="block w-full text-left text-lg text-gray-600 hover:text-blue-600 py-2"
-                                onClick={() => {
-                                  navigateToSection(item.href);
-                                  closeMobileMenu();
-                                }}
+                                onClick={closeMobileMenu}
                               >
                                 {item.label}
-                              </button>
+                              </Link>
                             );
                           }
                           return null;
@@ -407,20 +433,18 @@ const Navbar = () => {
             >
               Sign In
             </button>
-            <button
+            <Link
+              to="/contact"
               className="w-full bg-blue-600 text-white py-4 rounded-xl text-lg font-semibold hover:bg-blue-700 transition-colors"
-              onClick={() => {
-                navigateToSection('#Contact');
-                closeMobileMenu();
-              }}
+              onClick={closeMobileMenu}
             >
               Contact Us
-            </button>
+            </Link>
           </div>
         </div>
       </div>
 
-      {/* Spacer to prevent content hiding under fixed navbar */}
+      {/* Spacer */}
       <div className="h-16 lg:h-16"></div>
     </>
   );
